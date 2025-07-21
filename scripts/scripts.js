@@ -62,15 +62,15 @@ function createParticleSystem() {
   document.body.appendChild(particlesContainer);
 
   // Create 50 particles
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 50; i += 1) {
     const particle = document.createElement('div');
     particle.className = 'particle';
-    
+
     // Random positioning and timing
     particle.style.left = `${Math.random() * 100}%`;
     particle.style.animationDelay = `${Math.random() * 20}s`;
     particle.style.animationDuration = `${20 + Math.random() * 10}s`;
-    
+
     particlesContainer.appendChild(particle);
   }
 }
@@ -94,7 +94,7 @@ function initializeHeader() {
 
   function updateHeader() {
     const currentScrollY = window.scrollY;
-    
+
     if (currentScrollY > 100) {
       header.classList.add('scrolled');
     } else {
@@ -133,7 +133,7 @@ function initializeCarouselVisibility() {
     carousel.style.visibility = 'visible';
     carousel.style.animationPlayState = 'running';
     carousel.classList.add('carousel-ready');
-    
+
     // Force a layout recalculation to ensure sticky positioning works
     carousel.offsetHeight;
   }
@@ -145,7 +145,7 @@ function initializeCarouselVisibility() {
 function initializeScrollAnimations() {
   const observerOptions = {
     threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    rootMargin: '0px 0px -50px 0px',
   };
 
   const observer = new IntersectionObserver((entries) => {
@@ -175,7 +175,7 @@ function initializeSmoothScrolling() {
   // Disable custom smooth scrolling - browser native anchor navigation works better
   // with sticky carousel positioning. Direct URL loads work perfectly, so we should
   // let the browser handle all anchor navigation naturally.
-  
+
   // If you want to re-enable custom scrolling for non-anchor links, you can add:
   // document.addEventListener('click', (e) => {
   //   const link = e.target.closest('a[href^="#"]');
@@ -193,134 +193,119 @@ function initializeCursorEffects() {
   const trail = [];
   const trailLength = 10;
 
-  // Create trail elements
-  for (let i = 0; i < trailLength; i++) {
-    const dot = document.createElement('div');
-    dot.style.cssText = `
-      position: fixed;
-      width: ${8 - i * 0.5}px;
-      height: ${8 - i * 0.5}px;
-      background: rgba(100, 255, 218, ${1 - i * 0.1});
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: all 0.1s ease;
-    `;
-    document.body.appendChild(dot);
-    trail.push(dot);
-  }
-
-  let mouseX = 0;
-  let mouseY = 0;
-
   document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
+    const dot = document.createElement('div');
+    dot.className = 'cursor-trail';
+    dot.style.left = `${e.clientX}px`;
+    dot.style.top = `${e.clientY}px`;
+    document.body.appendChild(dot);
 
-  function animateTrail() {
-    let x = mouseX;
-    let y = mouseY;
+    trail.push(dot);
 
-    trail.forEach((dot, i) => {
-      const nextDot = trail[i + 1] || trail[0];
-      
-      dot.style.left = `${x}px`;
-      dot.style.top = `${y}px`;
+    if (trail.length > trailLength) {
+      const oldDot = trail.shift();
+      oldDot.remove();
+    }
 
-      if (nextDot) {
-        const rect = nextDot.getBoundingClientRect();
-        x += (rect.left - x) * 0.3;
-        y += (rect.top - y) * 0.3;
+    setTimeout(() => {
+      if (dot.parentNode) {
+        dot.remove();
       }
-    });
-
-    requestAnimationFrame(animateTrail);
-  }
-
-  animateTrail();
+    }, 1000);
+  });
 }
 
 /**
- * Adds parallax effect to elements
+ * Adds parallax scrolling effects
  */
 function initializeParallax() {
   const parallaxElements = document.querySelectorAll('[data-parallax]');
-  
+  let ticking = false;
+
   function updateParallax() {
-    const scrolled = window.pageYOffset;
-    
+    const scrollTop = window.pageYOffset;
+
     parallaxElements.forEach((element) => {
-      const rate = scrolled * parseFloat(element.dataset.parallax || 0.5);
-      element.style.transform = `translateY(${rate}px)`;
+      const speed = parseFloat(element.dataset.parallax) || 0.5;
+      const yPos = -(scrollTop * speed);
+      element.style.transform = `translateY(${yPos}px)`;
     });
+
+    ticking = false;
   }
 
-  window.addEventListener('scroll', updateParallax, { passive: true });
+  function requestTick() {
+    if (!ticking) {
+      requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true });
 }
 
 /**
- * Adds typing effect for text elements
+ * Adds typing animation to elements
  */
 function initializeTypingEffect() {
-  const typeElements = document.querySelectorAll('[data-type]');
-  
-  typeElements.forEach((element) => {
+  const typingElements = document.querySelectorAll('[data-type]');
+
+  typingElements.forEach((element) => {
     const text = element.textContent;
-    const speed = parseInt(element.dataset.typeSpeed || 50, 10);
-    
+    const speed = parseInt(element.dataset.typeSpeed, 10) || 50;
     element.textContent = '';
     element.style.borderRight = '2px solid var(--neon-cyan)';
-    
+
     let i = 0;
-    const typeTimer = setInterval(() => {
-      element.textContent += text.charAt(i);
-      i++;
-      
-      if (i > text.length) {
-        clearInterval(typeTimer);
-        element.style.borderRight = 'none';
+    const typeInterval = setInterval(() => {
+      if (i < text.length) {
+        element.textContent += text.charAt(i);
+        i += 1;
+      } else {
+        clearInterval(typeInterval);
+        setTimeout(() => {
+          element.style.borderRight = 'none';
+        }, 1000);
       }
     }, speed);
   });
 }
 
 /**
- * Adds glitch effect to elements on hover
+ * Adds glitch effect on hover
  */
 function initializeGlitchEffect() {
   const glitchElements = document.querySelectorAll('.glitch');
-  
+
   glitchElements.forEach((element) => {
-    element.dataset.text = element.textContent;
-    
     element.addEventListener('mouseenter', () => {
-      element.style.animation = 'glitch 0.3s infinite';
+      element.style.animation = 'glitch 0.3s ease-in-out';
     });
-    
+
     element.addEventListener('mouseleave', () => {
+      element.style.animation = '';
+    });
+
+    element.addEventListener('animationend', () => {
       element.style.animation = '';
     });
   });
 }
 
 /**
- * Adds loading animations
+ * Adds fade-in animations to sections
  */
 function addLoadingAnimations() {
-  // Add fade-in animations to sections
   const sections = document.querySelectorAll('.section');
   sections.forEach((section, index) => {
     section.style.opacity = '0';
-    section.style.transform = 'translateY(30px)';
+    section.style.transform = 'translateY(50px)';
     section.style.transition = 'all 0.6s ease';
-    section.style.transitionDelay = `${index * 0.1}s`;
-    
+
     setTimeout(() => {
       section.style.opacity = '1';
       section.style.transform = 'translateY(0)';
-    }, 100 + index * 100);
+    }, index * 200);
   });
 }
 
@@ -349,7 +334,7 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
-    await loadSection(main.querySelector('.section'), waitForFirstImage);
+    await waitForFirstImage();
   }
 
   try {
@@ -371,7 +356,6 @@ async function loadLazy(doc) {
   await loadSections(main);
 
   const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
   // Browser handles initial hash navigation perfectly with sticky carousel
   // No custom JavaScript needed
 
@@ -387,16 +371,14 @@ async function loadLazy(doc) {
   initializeSmoothScrolling();
   initializeScrollAnimations();
   addLoadingAnimations();
-  
-  // Add visual effects after a short delay to avoid performance impact
-  setTimeout(() => {
-    createParticleSystem();
-    createGeometricBackground();
-    initializeCursorEffects();
-    initializeParallax();
-    initializeTypingEffect();
-    initializeGlitchEffect();
-  }, 1000);
+
+  // Additional effects
+  createParticleSystem();
+  createGeometricBackground();
+  initializeCursorEffects();
+  initializeParallax();
+  initializeTypingEffect();
+  initializeGlitchEffect();
 }
 
 /**
@@ -406,7 +388,6 @@ async function loadLazy(doc) {
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
-  // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
