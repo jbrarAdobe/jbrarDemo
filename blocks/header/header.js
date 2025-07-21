@@ -241,4 +241,7 @@ export default async function decorate(block) {
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     navWrapper.append(await buildBreadcrumbs());
   }
+
+  // Header scroll behavior is now handled in scripts.js with navigation awareness
+  // This prevents conflicts with anchor navigation and carousel positioning
 }

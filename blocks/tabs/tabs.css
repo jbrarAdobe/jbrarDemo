@@ -1,13 +1,278 @@
-.tabs .tabs-list {
-  display: flex;
-  gap: 0.5ch;
-  max-width: 100%;
-  font-size: var(--body-font-size-xs);
-  overflow-x: auto;
+/* Futuristic Tabs Component */
+.tabs {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  border-radius: 16px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  margin: var(--space-xl) 0;
 }
 
-@media (width >= 600px) {
+/* Animated background glow */
+.tabs::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-glow);
+  opacity: 0.03;
+  animation: rotate 25s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Tab List Container */
+.tabs .tabs-list {
+  display: flex;
+  gap: 0;
+  max-width: 100%;
+  font-size: var(--body-font-size-s);
+  overflow-x: auto;
+  background: var(--surface-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px 16px 0 0;
+  padding: var(--space-s);
+  position: relative;
+}
+
+.tabs .tabs-list::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(100, 255, 218, 0.5), 
+    rgba(138, 43, 226, 0.5), 
+    transparent
+  );
+}
+
+/* Tab Buttons */
+.tabs .tabs-list button {
+  flex: 1;
+  margin: 0;
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  border-radius: 12px;
+  padding: var(--space-m) var(--space-l);
+  background: transparent;
+  color: var(--secondary-text);
+  font-weight: 600;
+  font-size: var(--body-font-size-s);
+  line-height: 1.4;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+/* Tab button hover effect */
+.tabs .tabs-list button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(100, 255, 218, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+  z-index: 1;
+}
+
+.tabs .tabs-list button:hover::before {
+  left: 100%;
+}
+
+.tabs .tabs-list button:hover {
+  border-color: var(--neon-cyan);
+  color: var(--primary-text);
+  box-shadow: 
+    0 4px 15px rgba(100, 255, 218, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Active tab styling */
+.tabs .tabs-list button[aria-selected='true'] {
+  background: var(--gradient-primary);
+  border-color: var(--neon-cyan);
+  color: var(--primary-text);
+  cursor: default;
+  box-shadow: 
+    0 8px 25px rgba(100, 255, 218, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(100, 255, 218, 0.2);
+  transform: translateY(-3px);
+  position: relative;
+  z-index: 2;
+}
+
+/* Neon glow effect for active tab */
+.tabs .tabs-list button[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    var(--neon-cyan), 
+    var(--neon-purple), 
+    var(--neon-pink), 
+    var(--neon-cyan)
+  );
+  background-size: 400% 400%;
+  border-radius: 14px;
+  z-index: -1;
+  animation: borderGlow 3s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+@keyframes borderGlow {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+}
+
+.tabs .tabs-list button p {
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* Tab Panel Container */
+.tabs .tabs-panel {
+  margin-top: 0;
+  padding: var(--space-xl);
+  border: none;
+  background: transparent;
+  overflow: auto;
+  position: relative;
+  min-height: 200px;
+  border-radius: 0 0 16px 16px;
+}
+
+/* Panel content animation */
+.tabs .tabs-panel:not([aria-hidden='true']) {
+  animation: panelFadeIn 0.4s ease-out;
+}
+
+@keyframes panelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tabs .tabs-panel[aria-hidden='true'] {
+  display: none;
+}
+
+/* Panel text styling */
+.tabs .tabs-panel p {
+  color: var(--secondary-text);
+  line-height: 1.8;
+  font-size: var(--body-font-size-m);
+  text-align: center;
+  margin: 0;
+  padding: var(--space-l) 0;
+}
+
+.tabs .tabs-panel h1,
+.tabs .tabs-panel h2,
+.tabs .tabs-panel h3 {
+  background: var(--gradient-accent);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: var(--space-m);
+}
+
+/* Circuit pattern overlay for panels */
+.tabs .tabs-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(100, 255, 218, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(138, 43, 226, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  pointer-events: none;
+  animation: circuitFlow 20s linear infinite;
+}
+
+@keyframes circuitFlow {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+/* Data stream effect for active panel */
+.tabs .tabs-panel:not([aria-hidden='true'])::after {
+  content: '< DATA STREAM ACTIVE />';
+  position: absolute;
+  top: var(--space-s);
+  right: var(--space-s);
+  color: var(--neon-cyan);
+  font-family: 'Monaco', monospace;
+  font-size: 10px;
+  opacity: 0.5;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 0.5; }
+  25%, 75% { opacity: 0.2; }
+}
+
+/* Responsive Design */
+@media (width <= 768px) {
   .tabs .tabs-list {
+    font-size: var(--body-font-size-xs);
+    padding: var(--space-s);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  
+  .tabs .tabs-list button {
+    padding: var(--space-s) var(--space-m);
+    min-width: 120px;
+    font-size: var(--body-font-size-xs);
+  }
+  
+  .tabs .tabs-panel {
+    padding: var(--space-l);
+  }
+  
+  .tabs .tabs-panel p {
     font-size: var(--body-font-size-s);
   }
 }
@@ -16,43 +281,58 @@
   .tabs .tabs-list {
     font-size: var(--body-font-size-m);
   }
+  
+  .tabs .tabs-list button {
+    padding: var(--space-l) var(--space-xl);
+  }
 }
 
-.tabs .tabs-list button {
-  flex: 0 0 max-content;
-  margin: 0;
-  border: 1px solid #dadada;
-  border-radius: 0;
-  padding: 0.5em;
-  background-color: var(--light-color);
-  color: initial;
-  font-weight: bold;
-  line-height: unset;
-  text-align: initial;
-  text-overflow: unset;
-  overflow: unset;
-  white-space: unset;
-  transition: background-color 0.2s;
+@media (width >= 1200px) {
+  .tabs {
+    margin: var(--space-xxl) 0;
+  }
+  
+  .tabs .tabs-panel {
+    padding: var(--space-xxl);
+    min-height: 250px;
+  }
 }
 
-.tabs .tabs-list button p {
-  margin: 0;
+/* Special effect variants */
+.tabs.glow-tabs .tabs-list button[aria-selected='true'] {
+  box-shadow: 
+    0 8px 25px rgba(100, 255, 218, 0.4),
+    0 0 30px rgba(100, 255, 218, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-
-.tabs .tabs-list button[aria-selected='true'] {
-  border-bottom: 1px solid var(--background-color);
-  background-color: var(--background-color);
-  cursor: initial;
+.tabs.premium-tabs {
+  border-color: var(--neon-purple);
 }
 
-.tabs .tabs-panel {
-  margin-top: -1px;
-  padding: 24px;
-  border: 1px solid #dadada;
-  overflow: auto;
+.tabs.premium-tabs .tabs-list button[aria-selected='true'] {
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-pink) 100%);
+  border-color: var(--neon-purple);
 }
 
-.tabs .tabs-panel[aria-hidden='true'] {
-  display: none;
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .tabs::before,
+  .tabs .tabs-panel::before,
+  .tabs .tabs-list button::before,
+  .tabs .tabs-list button[aria-selected='true']::after {
+    animation: none !important;
+  }
+  
+  .tabs .tabs-list button,
+  .tabs .tabs-panel {
+    transition: none !important;
+  }
+}
+
+/* Focus states for accessibility */
+.tabs .tabs-list button:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  border-radius: 12px;
 }

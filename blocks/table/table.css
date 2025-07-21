@@ -1,18 +1,351 @@
+/* Futuristic Table Component */
 .table {
   width: 100%;
-  overflow-x: auto;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  border-radius: 16px;
+  padding: var(--space-l);
+  position: relative;
+  margin: var(--space-xl) auto;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Animated background effect */
+.table::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-glow);
+  opacity: 0.02;
+  animation: rotate 30s linear infinite;
+  pointer-events: none;
+  border-radius: 16px;
+  z-index: -1;
+}
+
+/* Circuit pattern overlay */
+.table::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(100, 255, 218, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.5;
+  pointer-events: none;
+  animation: circuitFlow 25s linear infinite;
+  border-radius: 16px;
+}
+
+@keyframes circuitFlow {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
 }
 
 .table table {
   width: 100%;
   max-width: 100%;
   border-collapse: collapse;
-  font-size: var(--body-font-size-xs);
+  font-size: var(--body-font-size-s);
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  border-radius: 12px;
+  table-layout: fixed;
+  text-align: left;
 }
 
-@media (width >= 600px) {
+/* Set explicit column widths for perfect alignment */
+.table table th:nth-child(1),
+.table table td:nth-child(1) {
+  width: 40%;
+}
+
+.table table th:nth-child(2),
+.table table td:nth-child(2) {
+  width: 30%;
+}
+
+.table table th:nth-child(3),
+.table table td:nth-child(3) {
+  width: 30%;
+}
+
+/* Table Headers */
+.table table thead {
+  background: var(--gradient-primary);
+}
+
+.table table thead tr {
+  border-bottom: 2px solid rgba(100, 255, 218, 0.5);
+}
+
+/* Table Cells - Simplified for perfect alignment */
+.table table th,
+.table table td {
+  padding: 16px 24px;
+  text-align: left;
+  vertical-align: middle;
+  border: none;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Header specific styling */
+.table table th {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary-text);
+  background: transparent;
+}
+
+/* Body cell styling */
+.table table td {
+  color: var(--secondary-text);
+  background: transparent;
+}
+
+/* Table body rows */
+.table table tbody tr {
+  border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.table table tbody tr:hover {
+  background: rgba(100, 255, 218, 0.05);
+}
+
+.table table tbody tr:hover td {
+  color: var(--primary-text);
+}
+
+/* Text content in cells */
+.table table th p,
+.table table td p {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* Explicit column widths for alignment */
+.table table th:nth-child(1),
+.table table td:nth-child(1) {
+  width: 40%;
+}
+
+.table table th:nth-child(2),
+.table table td:nth-child(2) {
+  width: 30%;
+}
+
+.table table th:nth-child(3),
+.table table td:nth-child(3) {
+  width: 30%;
+}
+
+/* Links in tables */
+.table table td a {
+  color: var(--accent-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.table table td a:hover {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+}
+
+.table table td a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--neon-cyan);
+  transition: width var(--transition-normal);
+}
+
+.table table td a:hover::after {
+  width: 100%;
+}
+
+/* Button styling in tables */
+.table table td .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-s);
+  background: var(--gradient-primary);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  color: var(--primary-text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--body-font-size-xs);
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 80px;
+}
+
+.table table td .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(100, 255, 218, 0.3);
+  border-color: var(--neon-cyan);
+  text-shadow: none;
+}
+
+/* Special table variants */
+
+/* No header variant */
+.table.no-header table tbody tr:first-child {
+  background: var(--surface-bg);
+  font-weight: 600;
+}
+
+.table.no-header table tbody tr:first-child td {
+  color: var(--primary-text);
+  border-bottom: 2px solid rgba(100, 255, 218, 0.3);
+}
+
+/* Striped variant */
+.table.striped tbody tr:nth-child(odd) {
+  background: rgba(138, 43, 226, 0.05);
+}
+
+.table.striped tbody tr:nth-child(even) {
+  background: rgba(100, 255, 218, 0.05);
+}
+
+/* Bordered variant */
+.table.bordered table th,
+.table.bordered table td {
+  border: 1px solid rgba(100, 255, 218, 0.2);
+}
+
+.table.bordered table th {
+  border-bottom: 2px solid var(--neon-cyan);
+}
+
+/* Glow variant */
+.table.glow {
+  border-color: var(--neon-cyan);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(100, 255, 218, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.table.glow table tbody tr:hover {
+  box-shadow: 
+    0 0 25px rgba(100, 255, 218, 0.3),
+    0 0 15px rgba(100, 255, 218, 0.2);
+}
+
+/* Premium variant */
+.table.premium {
+  border-color: var(--neon-purple);
+  background: linear-gradient(135deg, 
+    rgba(138, 43, 226, 0.1) 0%, 
+    rgba(100, 255, 218, 0.05) 100%);
+}
+
+.table.premium table thead {
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-pink) 100%);
+}
+
+/* Data indicator for tech tables */
+.table.tech-table::before {
+  content: '< TABLE DATA STREAM />';
+  position: absolute;
+  top: var(--space-s);
+  right: var(--space-s);
+  color: var(--neon-cyan);
+  font-family: 'Monaco', monospace;
+  font-size: 10px;
+  opacity: 0.5;
+  z-index: 3;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 0.5; }
+  25%, 75% { opacity: 0.2; }
+}
+
+/* Responsive Design */
+@media (width <= 768px) {
+  .table {
+    padding: var(--space-m);
+    margin: var(--space-l) auto;
+    width: 95%;
+  }
+  
   .table table {
+    font-size: var(--body-font-size-xs);
+  }
+  
+  .table table th,
+  .table table td {
+    padding: var(--space-s) var(--space-m);
+  }
+  
+  .table table th {
     font-size: var(--body-font-size-s);
+  }
+  
+  /* Stack table on mobile */
+  .table.mobile-stack table,
+  .table.mobile-stack thead,
+  .table.mobile-stack tbody,
+  .table.mobile-stack th,
+  .table.mobile-stack td,
+  .table.mobile-stack tr {
+    display: block;
+  }
+  
+  .table.mobile-stack thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .table.mobile-stack tr {
+    background: var(--glass-bg);
+    margin-bottom: var(--space-m);
+    border-radius: 8px;
+    padding: var(--space-s);
+  }
+  
+  .table.mobile-stack td {
+    border: none;
+    position: relative;
+    padding-left: 40%;
+  }
+  
+  .table.mobile-stack td:before {
+    content: attr(data-label) ": ";
+    position: absolute;
+    left: var(--space-s);
+    width: 35%;
+    padding-right: var(--space-s);
+    white-space: nowrap;
+    color: var(--accent-text);
+    font-weight: 600;
   }
 }
 
@@ -20,48 +353,46 @@
   .table table {
     font-size: var(--body-font-size-m);
   }
+  
+  .table table th {
+    font-size: var(--body-font-size-l);
+  }
 }
 
-.table table thead tr {
-  border-top: 2px solid #dadada;
-  border-bottom: 2px solid #dadada;
+@media (width >= 1200px) {
+  .table {
+    padding: var(--space-xl);
+    margin: var(--space-xxl) 0;
+  }
+  
+  .table table th,
+  .table table td {
+    padding: var(--space-l) var(--space-xl);
+  }
 }
 
-.table table tbody tr {
-  border-bottom: 1px solid #dadada;
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .table::before,
+  .table::after,
+  .table table thead::before,
+  .table table thead tr::after,
+  .table table tbody tr::before {
+    animation: none !important;
+  }
+  
+  .table table tbody tr,
+  .table table td,
+  .table table td a,
+  .table table td .button {
+    transition: none !important;
+  }
 }
 
-.table table th {
-  font-weight: 700;
-}
-
-.table table th,
-.table table td {
-  padding: 0.5em;
-  text-align: left;
-}
-
-.table table th p,
-.table table td p {
-  margin: 0;
-}
-
-.table table td p + p {
-  margin-top: 0.25em;
-}
-
-/* no header variant */
-.table.no-header table tbody tr {
-  border-top: 1px solid #dadada;
-}
-
-/* striped variant */
-.table.striped tbody tr:nth-child(odd) {
-  background-color: var(--light-color);
-}
-
-/* bordered variant */
-.table.bordered table th,
-.table.bordered table td {
-  border: 1px solid #dadada;
+/* Focus states for accessibility */
+.table table td a:focus-visible,
+.table table td .button:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
