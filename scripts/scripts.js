@@ -334,7 +334,7 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
-    await waitForFirstImage();
+    await waitForFirstImage(main);
   }
 
   try {
